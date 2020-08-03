@@ -1,0 +1,152 @@
+#!/bin/bash
+
+
+##FLAGI POMOCNICZKOWE
+## HELP + ROSNACO + MALEJACO
+
+help()
+{
+	echo "HTML_CAT [dir|file|flag] | -h"
+        echo -e "\t Wygeneruj liste plikow w formacie HTML."
+        echo -e "\t-r sort rosnaco (nazwa)"
+        echo -e "\t-m sort malejaco (nazwa)"
+        echo -e "\t-h pomoc"
+        exit 1
+}
+
+
+
+
+
+
+## GLOWNY LOOP NA FLAGI POMOCNICZKOWE + dir,file
+
+
+SORT=0
+while [ $1 ];
+do
+        if [ -d $1 ]
+        then DIRECTORY+=($1); shift
+        elif [ -f $1 ]
+        then FILE+=($1); shift
+        elif [[ $1 == "-h" ]]
+        then help; exit 1
+        elif [[ $1 == "-r" ]]
+        then SORT=1; shift
+        elif [[ $1 == "-m" ]]
+        then SORT=2; shift
+        fi
+done
+
+
+
+
+## CHECK 
+
+if [ ! -d ~/html_program ]; then
+        mkdir ~/html_program
+fi
+
+
+if [ ! -f ~/html_program/index.html ]; then
+        touch ~/html_program/index.html
+fi
+
+if [ ! -f ~/html_program/style.css ]; then
+        wget -P ~/html_program https://raw.githubusercontent.com/in4shadow/KCH/master/style.css
+fi
+
+
+
+
+
+
+
+
+echo "<!DOCTYPE html>
+<html lang=\"en\">
+<head>
+    <meta charset=\"UTF-8\">
+    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, shrink-to-fit=no\">
+    <link rel=\"stylesheet\" href=\"style.css\"> 
+    <title>$TYTUL</title>
+    </head>
+<body>
+    <nav>
+        <h1>$TYTUL</h1>
+    </nav>" > ~/html_program/index.html
+
+
+## ZDJECIA PLUS CASEOWE  PODZIAL NA SORCIKI
+
+ZDJ() {
+        echo "    <section>
+        <h1>ZDJ</h1>" 1>> ~/html_program/index.html
+        case $SORT in
+        0)
+        find ${DIRECTORY[@]} ${FILE[@]} -type f \( -iname \*.png -o -iname \*.jpg -o -iname \*.gif -o -iname \*.jpeg \) -printf "<div class=\"element\"><div class=\"min\"><img src=\"%p\" alt=\"%f\"></div><p>Filename:</p><div class=\"name\">%f</div><p>Modified:</p><div class=\"mod\">%Td.%Tm.%TY %TH:%TM</div><p>Source:</p><div class=\"source\">%p</div><p>Attachment:</p><a href=\"file://%p\">run</a></div>\n" 1>> ~/html_program/index.html
+        ;;
+        1)
+        find ${DIRECTORY[@]} ${FILE[@]} -type f \( -iname \*.png -o -iname \*.jpg -o -iname \*.gif -o -iname \*.jpeg \) -printf "%f ~<div class=\"element\"><div class=\"min\"><img src=\"%p\" alt=\"%f\"></div><p>Filename:</p><div class=\"name\">%f</div><p>Modified:</p><div class=\"mod\">%Td.%Tm.%TY %TH:%TM</div><p>Source:</p><div class=\"source\">%p</div><p>Attachment:</p><a href=\"file://%p\">run</a></div>\n" | sort | cut -d "~" -f 2- 1>> ~/html_program/index.html
+        ;;
+        2)
+        find ${DIRECTORY[@]} ${FILE[@]} -type f \( -iname \*.png -o -iname \*.jpg -o -iname \*.gif -o -iname \*.jpeg \) -printf "%f ~<div class=\"element\"><div class=\"min\"><img src=\"%p\" alt=\"%f\"></div><p>Filename:</p><div class=\"name\">%f</div><p>Modified:</p><div class=\"mod\">%Td.%Tm.%TY %TH:%TM</div><p>Source:</p><div class=\"source\">%p</div><p>Attachment:</p><a href=\"file://%p\">run</a></div>\n" | sort -r | cut -d "~" -f 2- 1>> ~/html_program/index.html
+        ;;
+        esac
+        echo "</section>" 1>> ~/html_program/index.html
+}
+
+
+## DOKUMENTY PLUS CASEOWE PODZIAL NA SORCIKI
+
+
+DOC() {
+        echo "    <section>
+        <h1>DOC</h1>" 1>> ~/html_program/index.html
+        case $SORT in
+        0)
+        find ${DIRECTORY[@]} ${FILE[@]} -type f \( -iname \*.pdf -o -iname \*.doc -o -iname \*.odt \) -printf "<div class=\"element\"><p>Filename:</p><div class=\"name\">%f</div><p>Modified:</p><div class=\"mod\">%Td.%Tm.%TY %TH:%TM</div><p>Source:</p><div class=\"source\">%p</div><p>Attachment:</p><a href=\"file://%p\">run</a></div>\n" 1>> ~/html_program/index.html
+        ;;
+        1)
+        find ${DIRECTORY[@]} ${FILE[@]} -type f \( -iname \*.pdf -o -iname \*.doc -o -iname \*.odt \) -printf "%f ~<div class=\"element\"><p>Filename:</p><div class=\"name\">%f</div><p>Modified:</p><div class=\"mod\">%Td.%Tm.%TY %TH:%TM</div><p>Source:</p><div class=\"source\">%p</div><p>Attachment:</p><a href=\"file://%p\">run</a></div>\n" | sort | cut -d "~" -f 2- 1>> ~/html_program/index.html
+        ;;
+        2)
+        find ${DIRECTORY[@]} ${FILE[@]} -type f \( -iname \*.pdf -o -iname \*.doc -o -iname \*.odt \) -printf "%f ~<div class=\"element\"><p>Filename:</p><div class=\"name\">%f</div><p>Modified:</p><div class=\"mod\">%Td.%Tm.%TY %TH:%TM</div><p>Source:</p><div class=\"source\">%p</div><p>Attachment:</p><a href=\"file://%p\">run</a></div>\n" | sort -r | cut -d "~" -f 2- 1>> ~/html_program/index.html
+        ;;
+        esac
+        echo "</section>" 1>> ~/html_program/index.html
+}
+
+
+## MUZYCZKA PLUS CASEOWE PODZIAL NA SORCIKI
+
+
+MSC() {
+        echo "    <section>
+        <h1>MSC</h1>" 1>> ~/html_program/index.html
+        case $SORT in
+        0)
+        find ${DIRECTORY[@]} ${FILE[@]} -type f \( -iname \*.mp3 -o -iname \*.wav -o -iname \*.mp4 -o -iname \*.flac \) -printf "<div class=\"element\"><p>Filename:</p><div class=\"name\">%f</div><p>Modified:</p><div class=\"mod\">%Td.%Tm.%TY %TH:%TM</div><p>Source:</p><div class=\"source\">%p</div><p>Attachment:</p><a href=\"file://%p\">run</a></div>\n" 1>> ~/html_program/index.html
+        ;;
+        1)
+        find ${DIRECTORY[@]} ${FILE[@]} -type f \( -iname \*.mp3 -o -iname \*.wav -o -iname \*.mp4 -o -iname \*.flac \) -printf "%f ~<div class=\"element\"><p>Filename:</p><div class=\"name\">%f</div><p>Modified:</p><div class=\"mod\">%Td.%Tm.%TY %TH:%TM</div><p>Source:</p><div class=\"source\">%p</div><p>Attachment:</p><a href=\"file://%p\">run</a></div>\n" | sort | cut -d "~" -f 2- 1>> ~/html_program/index.html
+        ;;
+        2)
+        find ${DIRECTORY[@]} ${FILE[@]} -type f \( -iname \*.mp3 -o -iname \*.wav -o -iname \*.mp4 -o -iname \*.flac \) -printf "%f ~<div class=\"element\"><p>Filename:</p><div class=\"name\">%f</div><p>Modified:</p><div class=\"mod\">%Td.%Tm.%TY %TH:%TM</div><p>Source:</p><div class=\"source\">%p</div><p>Attachment:</p><a href=\"file://%p\">run</a></div>\n" | sort -r | cut -d "~" -f 2- 1>> ~/html_program/index.html
+        ;;
+        esac
+        echo "</section>" 1>> ~/html_program/index.html
+}
+
+
+## WYWOLANIE
+
+
+ZDJ
+MSC
+DOC
+
+
+echo "</body>
+</html>" 1>> ~/html_program/index.html
+
